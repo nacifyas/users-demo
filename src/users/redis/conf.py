@@ -7,7 +7,7 @@ REDIS_PORT = "6388"
 ENCODING = "utf-8"
 
 # SYNC
-redis_connection = redis.StrictRedis(
+redis_sync_connection = redis.StrictRedis(
     REDIS_HOST,
     REDIS_PORT,
     charset=ENCODING,
