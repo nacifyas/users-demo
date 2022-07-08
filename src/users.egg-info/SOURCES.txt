@@ -9,6 +9,5 @@ src/users.egg-info/top_level.txt
 src/users/models/__init__.py
 src/users/models/user.py
 src/users/redis/__init__.py
-src/users/redis/cache.py
 src/users/redis/conf.py
 src/users/redis/dal.py

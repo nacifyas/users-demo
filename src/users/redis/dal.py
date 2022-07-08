@@ -33,3 +33,7 @@ class UserDAL:
 
     async def get_by_username(self, username: str) -> list[UserRead]:
         return await redis.ft().search(f"{username}")
+
+
+print("Hello world")
+asyncio.run(UserDAL().get("78"))

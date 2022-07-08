@@ -12,3 +12,10 @@ venv.bak/
 *.swp
 __pycache__
 *.http
+.build
+/build
+/*.egg-info
+/.egg-info
+*.egg-info
+*egg-info*
+/src/*.egg-info
