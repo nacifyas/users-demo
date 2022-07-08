@@ -1,4 +1,4 @@
-# import redis.asyncio as redis_async
+import redis.asyncio as redis_async
 import asyncio
 import redis
 
@@ -14,12 +14,12 @@ redis_sync_connection = redis.StrictRedis(
     decode_responses=True
 )
 
-# # ASYNC
-# async def connect():
-#     return await redis_async.from_url(
-#     f"redis://{REDIS_HOST}:{REDIS_PORT}",
-#     encoding=ENCODING,
-#     decode_responses=True
-#     )
+# ASYNC
+async def connect():
+    return await redis_async.from_url(
+    f"redis://{REDIS_HOST}:{REDIS_PORT}",
+    encoding=ENCODING,
+    decode_responses=True
+    )
 
-# redis_async_connection = asyncio.run(connect())
+redis_async_connection = asyncio.run(connect())
