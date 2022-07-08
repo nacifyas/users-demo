@@ -1,4 +1,4 @@
-from redis_conf import redis_connection as redis
+from redis_conf import redis
 from redis_om import HashModel
 # from typing import Optional
 # from fastapi import Query

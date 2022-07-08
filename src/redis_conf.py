@@ -7,6 +7,7 @@ ENCODING = "utf-8"
 redis = get_redis_connection(
     host=REDIS_HOST,
     port=REDIS_PORT,
+    encoding=ENCODING,
     decode_responses=True
 )
 
