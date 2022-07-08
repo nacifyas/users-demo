@@ -20,3 +20,4 @@ __pycache__
 *egg-info*
 /src/*.egg-info
 /src/users.egg-info
+/dist

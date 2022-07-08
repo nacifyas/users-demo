@@ -1,6 +1,9 @@
 import redis.asyncio as redis_async
-import asyncio
 import redis
+import asyncio
+
+redis_async = redis.asyncio
+
 
 REDIS_HOST = "atomflare.af"
 REDIS_PORT = "6388"
