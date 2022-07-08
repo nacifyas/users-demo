@@ -19,3 +19,4 @@ __pycache__
 *.egg-info
 *egg-info*
 /src/*.egg-info
+/src/users.egg-info
