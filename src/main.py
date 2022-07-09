@@ -28,9 +28,9 @@ async def create(user: User):
     return user.save()
 
 
-# @app.put('/')
-# async def update_user(user):
-#     return await UserDAL().update(user)
+@app.put('/')
+async def update_user(user: User):
+    return user.save()
 
 
 @app.delete('/{pk}')
