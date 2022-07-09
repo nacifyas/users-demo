@@ -29,12 +29,12 @@ async def create(user: User):
 
 
 @app.put('/')
-async def update_user(user: User):
+async def update(user: User):
     return user.save()
 
 
 @app.delete('/{pk}')
-async def delete_user(pk: str):
+async def delete(pk: str):
     return User.delete(pk)
 
 
