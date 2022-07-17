@@ -9,6 +9,7 @@ setup(
     install_requires=[
         "redis-om >= 0.0.27",
         "fastapi >= 0.78.0",
-        "uvicorn >= 0.18.2"
+        "uvicorn >= 0.18.2",
+        "motor >= 3.0.0"
     ],
 )

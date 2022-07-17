@@ -1,10 +1,9 @@
-import asyncio
 import uvicorn
-from models.user import User
+from dal.userdal import UserDAL
+from models.user import User, UserCreate, UserRead
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from aredis_om import NotFoundError, Migrator
-
+from bson.errors import InvalidId
 
 app = FastAPI()
 
@@ -16,37 +15,57 @@ app.add_middleware(
 )
 
 
-@app.get('/{primary_key}', response_model=User, status_code=status.HTTP_200_OK)
-async def get_user_by_id(primary_key: str) -> User:
+@app.get('/{primary_key}', response_model=UserRead, status_code=status.HTTP_200_OK)
+async def get_user_by_id(primary_key: str) -> UserRead:
+    """ This endpoint retrieves the user given its id
+
+    Args:
+        primary_key (str): user primary key or id
+
+    Raises:
+        HTTPException: With the error 404 if such user
+        does not exist
+        HTTPException: With the error 406 if the provided
+        id is not properfly formated
+
+    Returns:
+        User: User with all its fields
+    """
     try:
-        return await User.get(primary_key)
-    except NotFoundError:
+        user = UserDAL().get_user_by_id(primary_key)
+        if user is not None:
+            return user
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+    except InvalidId:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Not a valid ID"
+        )        
 
 
-@app.get('/', response_model=list[User], status_code=status.HTTP_200_OK)
-async def get_all_users(offset: int = 0, limit: int = 50) -> list[User]:
-    corr_arr = [get_user_by_id(pk) async for pk in await User.all_pks()]
-    user_arr = await asyncio.gather(*corr_arr)
-    return user_arr[offset:limit]
-    
-
-@app.post('/', response_model=User, status_code=status.HTTP_201_CREATED)
-async def create_user(user: User) -> User:
-    return await user.save()
+@app.get('/', response_model=list[UserRead], status_code=status.HTTP_200_OK)
+async def get_all_users(offset: int = 0, limit: int = 50) -> list[UserRead]:
+    return UserDAL().get_all_users(offset, limit)
 
 
-@app.put('/', response_model=User, status_code=status.HTTP_202_ACCEPTED)
-async def update_user(user: User) -> User:
-    return await user.save()
+@app.post('/', response_model=UserRead, status_code=status.HTTP_201_CREATED)
+async def create_user(user_create: UserCreate) -> UserRead:
+    return UserDAL().create_user(user_create)
 
 
 @app.delete('/{primary_key}', status_code=status.HTTP_202_ACCEPTED)
 async def delete_user(primary_key: str) -> int:
-    return await User.delete(primary_key)
+    try:
+        return UserDAL().delete_user(primary_key)
+    except InvalidId:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Not a valid ID"
+        )     
 
 if __name__ == '__main__':
     uvicorn.run("main:app", port=8001, reload=True, host="127.0.0.1")

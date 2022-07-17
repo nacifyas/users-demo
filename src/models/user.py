@@ -1,12 +1,29 @@
-from aredis_om import HashModel, Field
-from redis_conf import redis
+from pydantic import BaseModel
 
 
-class User(HashModel):
-    username: str = Field(index=True, full_text_search=True)
-    age: int
+class UserCreate(BaseModel):
+    username: str
     password: str
+
+    class Config:
+        orm_mode = True
+
+
+class User(UserCreate):
     status: str = "PROCESSING"
 
-    class Meta:
-        database = redis
+
+class UserRead(User):
+    pk: str
+
+
+def normalize(document) -> UserRead:
+    if document is not None:
+        return UserRead(**
+            {
+                "pk": str(document["_id"]),
+                "username": document["username"],
+                "password": document["password"],
+                "status": document["status"]
+            }
+        )
