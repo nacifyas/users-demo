@@ -1,6 +1,6 @@
 import uvicorn
 from dal.userdal import UserDAL
-from models.user import User, UserCreate, UserRead
+from models.user import UserCreate, UserRead
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from bson.errors import InvalidId
