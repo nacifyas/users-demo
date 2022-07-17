@@ -18,6 +18,15 @@ class UserRead(User):
 
 
 def normalize(document) -> UserRead:
+    """ Recieves a document (mongodb object querried)
+    and turns it into a UserRead
+
+    Args:
+        document: mongodb querry document
+
+    Returns:
+        UserRead: Equivalent UserRead model of the document
+    """
     if document is not None:
         return UserRead(**
             {
