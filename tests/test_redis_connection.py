@@ -3,7 +3,7 @@ from config.redis_conf import redis, redis_stream
 
 
 @pytest.mark.asyncio
-async def test_db():
+async def test_db_connection():
     """ Tests if the database
     connection is functioning
     """
@@ -11,7 +11,7 @@ async def test_db():
 
 
 @pytest.mark.asyncio
-async def test_stream():
+async def test_stream_connection():
     """ Tests if the streams
     connection for pub-sub for
     events sourcing is functioning

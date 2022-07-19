@@ -3,7 +3,6 @@ from models.user import User
 from dal.userdal import UserDAL
 
 
-
 @pytest.mark.asyncio
 async def test_create_valid_user():
     user_data: User = User(
@@ -18,7 +17,7 @@ async def test_create_valid_user():
 
 
 @pytest.mark.asyncio
-async def test_create_valid_user():
+async def test_create_get_user():
     user_data: User = User(
         **{
             "username":"test_user",
