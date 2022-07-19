@@ -51,7 +51,7 @@ async def get_all_users(offset: int = 0, limit: int = 50) -> list[User]:
     Returns:
         list[User]: list of all the users
     """
-    return UserDAL().get_all_users(offset, limit)
+    return await UserDAL().get_all_users(offset, limit)
     
 
 @app.post('/', response_model=User, status_code=status.HTTP_201_CREATED)
