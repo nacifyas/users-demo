@@ -7,9 +7,8 @@ setup(
     py_modules=["main"],
     package_dir={'':'src'},
     install_requires=[
-        "redis >= 4.3.4",
+        "redis-om >= 0.0.27",
         "fastapi >= 0.78.0",
-        "uvicorn >= 0.18.2",
-        "pymongo >= 4.1.1"
+        "uvicorn >= 0.18.2"
     ],
 )

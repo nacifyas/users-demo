@@ -1,38 +1,12 @@
-from pydantic import BaseModel
+from aredis_om import HashModel, Field
+from redis_conf import redis
 
 
-class UserCreate(BaseModel):
-    username: str
+class User(HashModel):
+    username: str = Field(index=True, full_text_search=True)
+    age: int
     password: str
-
-    class Config:
-        orm_mode = True
-
-
-class User(UserCreate):
     status: str = "PROCESSING"
 
-
-class UserRead(User):
-    pk: str
-
-
-def normalize(document) -> UserRead:
-    """ Recieves a document (mongodb object querried)
-    and turns it into a UserRead
-
-    Args:
-        document: mongodb querry document
-
-    Returns:
-        UserRead: Equivalent UserRead model of the document
-    """
-    if document is not None:
-        return UserRead(**
-            {
-                "pk": str(document["_id"]),
-                "username": document["username"],
-                "password": document["password"],
-                "status": document["status"]
-            }
-        )
+    class Meta:
+        database = redis
