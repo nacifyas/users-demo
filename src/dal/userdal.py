@@ -43,7 +43,7 @@ class UserDAL():
         return await User.get(primary_key)
 
     
-    async def create_user(user: User) -> User:
+    async def create_user(self, user: User) -> User:
         """ Gets an User object and adds it to the database
 
         Args:
@@ -55,7 +55,7 @@ class UserDAL():
         return await user.save()
 
 
-    async def delete_user(primary_key: str) -> int:
+    async def delete_user(self, primary_key: str) -> int:
         """ Given an user's primary key, it deletes it
 
         Args:
