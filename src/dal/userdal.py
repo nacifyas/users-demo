@@ -3,7 +3,17 @@ import asyncio
 
 
 class UserDAL():
+    """ This class abstracts from the endpoints section all
+    the database access and operation in order to keep the
+    endpoints section more clean.
+    The following methods are Data Access Layer centric with
+    no side effects, meaning that they perform exactly the
+    transaction suggested by the method name and the docstring,
+    thus they are very specialized in their task with no side
+    effects
+    """
 
+    
     async def get_all_users(self, offset: int = 0, limit: int = 50) -> list[User]:
         """ Returns an array of all users, delimited by the offset
         and limit argument
