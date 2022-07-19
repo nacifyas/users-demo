@@ -16,5 +16,5 @@ redis_stream = get_redis_connection(
     url=STREAM_URL,
     encoding=ENCODING,
     decode_responses=True,
-    db=0
+    db=1
 )
