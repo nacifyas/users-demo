@@ -165,16 +165,13 @@ async def stream_broker() -> None:
                 entry_id, entry_data = entry
                 sender = entry_data.pop("SENDER")
                 operation = entry_data.pop("OP")
-                flag = entry_data.pop("FLAG")
                 if sender == THIS_SERVICE:
                     break
                 if stream == 'user':
                     if operation == "CREATE":
-                        if flag == "REQ":
-                            asyncio.run(respond_user_create_req(entry_data))
+                        asyncio.run(respond_user_create_req(entry_data))
                     elif operation == "DELETE":
-                        if flag == "REQ":
-                            asyncio.run(respond_user_delete_req(entry_data))
+                        asyncio.run(respond_user_delete_req(entry_data))
             last_entry_id = stream_entry[-1][0]
             await redis.set(f'stream:{stream}', last_entry_id)
         streams = ACTIVE_STREAMS       

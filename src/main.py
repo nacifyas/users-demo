@@ -71,7 +71,6 @@ async def create_user(user: User) -> User:
     event = {
         'sender':THIS_SERVICE,
         'OP':'CREATE',
-        'FLAG':'INFO',
         'DATA':json.dumps(user.dict())
     }
     user_creation, publishion = await asyncio.gather(
@@ -95,7 +94,6 @@ async def delete_user(primary_key: str) -> int:
     event = {
         'sender':THIS_SERVICE,
         'OP':'DELETE',
-        'FLAG':'INFO',
         'DATA':primary_key
     }
     deletion, publishion = await asyncio.gather(
