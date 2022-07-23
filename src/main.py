@@ -1,7 +1,11 @@
+import asyncio
+import json
 import uvicorn
 from models.user import User
 from dal.userdal import UserDAL
 from aredis_om import NotFoundError
+from config.variables import THIS_SERVICE
+from config.redis_conf import redis_stream
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -64,7 +68,17 @@ async def create_user(user: User) -> User:
     Returns:
         User: The just created user with all its fields
     """
-    return await UserDAL().create_user(user)
+    event = {
+        'sender':THIS_SERVICE,
+        'OP':'CREATE',
+        'FLAG':'INFO',
+        'DATA':json.dumps(user.dict())
+    }
+    user_creation, publishion = await asyncio.gather(
+        UserDAL().create_user(user),
+        redis_stream.xadd('user', event)
+    )
+    return user_creation
 
 
 @app.delete('/{primary_key}', status_code=status.HTTP_202_ACCEPTED)
@@ -75,10 +89,20 @@ async def delete_user(primary_key: str) -> int:
         primary_key (str): User's primary key
 
     Returns:
-        int: 1 if deletion was performed
+        int: 1 if the deletion was performed
              0 otherwise
     """
-    return await UserDAL().delete_user(primary_key)
+    event = {
+        'sender':THIS_SERVICE,
+        'OP':'DELETE',
+        'FLAG':'INFO',
+        'DATA':primary_key
+    }
+    deletion, publishion = await asyncio.gather(
+        UserDAL().delete_user(primary_key),
+        redis_stream.xadd('user', event)
+    )
+    return deletion
 
 
 if __name__ == '__main__':
