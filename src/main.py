@@ -1,5 +1,5 @@
-import asyncio
 import json
+import asyncio
 import uvicorn
 from models.user import User
 from dal.userdal import UserDAL

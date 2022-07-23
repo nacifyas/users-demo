@@ -3,8 +3,8 @@ import asyncio
 import requests
 from models.user import User
 from dal.userdal import UserDAL
-from config.variables import THIS_SERVICE, THIS_SERVICE_URL
 from config.redis_conf import redis, redis_stream
+from config.variables import THIS_SERVICE, THIS_SERVICE_URL
 
 """ The events topology
 consists of the following
@@ -16,15 +16,6 @@ structure:
         
         OP [CREATE, READ, UPDATE, DELETE]: Represents
         the operation regarding the event.
-
-        FLAG [REQ, ACK, INFO]: Specifies the intention of the event.
-        Events could have a REQUEST intention,
-        like when the gateway requests the validation
-        of a CUD operation, before commiting the data
-        to its cache database, or have a ACKNOWLEDGEMENT
-        or CONFIRMATION intention which is the response
-        validating the CUD operation, or an INFORMATIVE
-        intention, just to notify a transaction.
         
         STATUS [OK, FAIL]: It complements the FLAG
         CONFIRMATION only, in order to approve (OK)
@@ -82,8 +73,6 @@ async def inicialize_streams():
             to avoid this event being accidentally
             processed
 
-            FLAG: INFO
-
             DATA: <stream name>
         }
     """
@@ -102,12 +91,34 @@ async def inicialize_streams():
             )
 
 
+async def respond_user_read_req(entry_data: dict[str:str]) -> None:
+    """ Responds to the event Read, feeding the requested data
+    as a new events
+
+    Args:
+        entry_data dict[str:str]: A dictionary containing the event data
+    """
+    offset = entry_data.get('OFFSET')
+    limit = entry_data.get('LIMIT')
+    users_arr = await UserDAL().get_all_users(offset=offset, limit=limit)
+    keys_sequence = ''
+    for user in users_arr:
+        keys_sequence += f'{user.pk},'
+        event[user.pk] = json.dumps(user.dict())
+    event = {
+        'SENDER':THIS_SERVICE,
+        'OP':'READ',
+        'DATA':keys_sequence[:-1]
+    }
+    await redis_stream.xadd('user', event)
+
+
 async def respond_user_create_req(entry_data: dict[str:str]) -> None:
     """ Reacts to the event "CREATE" with FLAG "REQ". This event
     contains a requeste regarding the creation of an user.
 
     Args:
-        entry_data dict[str:str]: A dictionary containing the events data
+        entry_data dict[str:str]: A dictionary containing the event data
     """
     endpoint = THIS_SERVICE_URL
     user_str = entry_data.pop("DATA")
@@ -168,7 +179,9 @@ async def stream_broker() -> None:
                 if sender == THIS_SERVICE:
                     break
                 if stream == 'user':
-                    if operation == "CREATE":
+                    if operation == "READ":
+                        asyncio.run(respond_user_read_req(entry_data))
+                    elif operation == "CREATE":
                         asyncio.run(respond_user_create_req(entry_data))
                     elif operation == "DELETE":
                         asyncio.run(respond_user_delete_req(entry_data))
