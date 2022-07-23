@@ -81,7 +81,6 @@ async def inicialize_streams():
             event = {
                 'SENDER': THIS_SERVICE,
                 'OP': 'CREATE_STREAM',
-                'FLAG': 'INFO',
                 'DATA': stream
             }
             await redis_stream.xadd(
